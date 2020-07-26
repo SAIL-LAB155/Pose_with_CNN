@@ -1,11 +1,11 @@
 import torch
 
-video_path = "video/new_video/single_half.mp4"
-img_folder = "img/test"
+video_path = "video/ceiling/frog_1.mp4"
+img_folder = "video/ceiling/BU"
 
 write_video = False
-write_box = True
-write_kps = True
+write_box = False
+write_kps = False
 
 device = "cuda:0"
 print("Using {}".format(device))
@@ -25,7 +25,7 @@ fast_inference = True
 pose_batch = 80
 
 
-frame_size = (720,540)
+frame_size = (720, 540)
 
 pose_backbone = "seresnet101"
 pose_weight = "weights/sppe/duc_se.pth"
@@ -34,9 +34,13 @@ pose_cls = 17
 
 DUCs = [480, 240]
 
+CNN_weight = "weights/CNN/ceiling/ceiling_mobilenet_2cls.pth"
+CNN_backbone = "mobilenet"
+CNN_class = ["freestyle", "frog"]
 
-yolo_cfg = "config/yolo_cfg/yolov3.cfg"
-yolo_model = 'weights/yolo/yolov3.weights'
+
+yolo_cfg = "config/yolo_cfg/yolov3-1cls.cfg"
+yolo_weight = 'weights/yolo/0607_bs32_freeT0.8.weights'
 
 
 track_idx = "all"    # If all idx, track_idx = "all"
