@@ -2,7 +2,7 @@
 
 from src.human_detection import HumanDetection as ImgProcessor
 import cv2
-from config.config import video_path, write_box, write_video, frame_size, write_kps
+from config.config import video_path, write_box, write_video, frame_size, write_kps, gray
 from utils.utils import boxdict2str, kpsdict2str, kpsScoredict2str
 
 body_parts = ["Nose", "Left eye", "Right eye", "Left ear", "Right ear", "Left shoulder", "Right shoulder", "Left elbow",
@@ -17,7 +17,8 @@ fourcc = cv2.VideoWriter_fourcc(*'XVID')
 class VideoProcessor:
     def __init__(self, video_path):
         self.cap = cv2.VideoCapture(video_path)
-        self.height, self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        self.height, self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), \
+                                  int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         if write_video:
             self.out = cv2.VideoWriter(video_path[:-4] + "_processed.avi", fourcc, 15, frame_size)
         if write_box:
@@ -36,7 +37,7 @@ class VideoProcessor:
             cnt += 1
             if ret:
                 frame = cv2.resize(frame, frame_size)
-                kps, boxes, kps_score = IP.process_img(frame)
+                kps, boxes, kps_score = IP.process_img(frame, gray=gray)
                 IP.classify()
                 img, img_black = IP.visualize()
 
@@ -74,7 +75,7 @@ class VideoProcessor:
                     # cv2.putText(img, "cnt{}".format(cnt), (100, 200), cv2.FONT_HERSHEY_PLAIN, 5, (0, 255, 255), 5)
 
                 cv2.imshow("res", img)
-                cv2.waitKey(2)
+                cv2.waitKey(1)
                 if write_video:
                     self.out.write(img)
             else:

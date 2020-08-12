@@ -104,6 +104,7 @@ class HumanDetection:
             y2 = self.frame.shape[0] if y2 > self.frame.shape[0] else y2
             img = np.asarray(self.frame[y1:y2, x1:x2])
             cv2.imshow("cut", img)
+            cv2.imwrite("img/tmp/0.jpg", img)
             out = self.CNN_model.predict(img)
             idx = out[0].tolist().index(max(out[0].tolist()))
             pred = CNN_class[idx]

@@ -1,7 +1,7 @@
 from src.human_detection import HumanDetection
 import cv2
 import os
-from config.config import img_folder
+from config.config import img_folder, gray
 import numpy as np
 
 IP = HumanDetection()
@@ -16,7 +16,7 @@ if __name__ == '__main__':
         cnt += 1
         print("Processing pic {}".format(cnt))
         frame = cv2.imread(os.path.join(src_folder, img_name))
-        kps, boxes, _ = IP.process_img(frame)
+        kps, boxes, _ = IP.process_img(frame, gray=gray)
         # cv2.imwrite(os.path.join(dest_folder, img_name), img)
         if boxes is not None:
             for idx, box in enumerate(boxes):
