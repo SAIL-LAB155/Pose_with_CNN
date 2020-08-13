@@ -121,6 +121,12 @@ class CNNModel(object):
                 nn.ReLU(inplace=True),
                 nn.AdaptiveAvgPool2d((1, 1))
             )
+        elif model_name == "mnasnet":
+            self.model = models.mnasnet1_0()
+            self.set_parameter_requires_grad(self.model, feature_extract)
+            self.model.classifier = nn.Sequential(nn.Dropout(p=0.2, inplace=True),
+                                                  nn.Linear(1280, num_classes))
+
         else:
             raise ValueError("Your pretrain model name is wrong!")
 
