@@ -17,7 +17,9 @@ if __name__ == '__main__':
         print("Processing pic {}".format(cnt))
         frame = cv2.imread(os.path.join(src_folder, img_name))
         kps, boxes, _ = IP.process_img(frame, gray=gray)
+        img_rgb, img_black = IP.visualize()
         # cv2.imwrite(os.path.join(dest_folder, img_name), img)
+        frame = img_black
         if boxes is not None:
             for idx, box in enumerate(boxes):
                 x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
