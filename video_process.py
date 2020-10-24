@@ -47,6 +47,7 @@ class VideoProcessor:
             self.kps_score_txt = open(kps_score_file, "w")
 
     def process_video(self):
+        self.IP.init()
         cnt = 0
         while True:
             ret, frame = self.cap.read()
