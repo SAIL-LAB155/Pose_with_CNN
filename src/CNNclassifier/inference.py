@@ -71,7 +71,11 @@ class CNNInference(object):
             img = np.asarray(pred_img[y1:y2, x1:x2])
 
             pred_array = self.predict_result(img)
-            idx = pred_array[0].tolist().index(max(pred_array[0].tolist()))
+            # idx = pred_array[0].tolist().index(max(pred_array[0].tolist()))
+            if pred_array[0][0] > 0.92:
+                idx = 0
+            else:
+                idx = 1
             prediction = self.CNN_class[idx]
 
             text_location = (int((box[0]+box[2])/2)), int((box[1])+50)

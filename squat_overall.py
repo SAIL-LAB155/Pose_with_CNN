@@ -2,7 +2,7 @@
 
 from src.human_detection import HumanDetection as ImgProcessor
 import cv2
-from config.config import video_path, write_box, write_video, frame_size, write_kps, gray
+from config.config import video_path, write_box, write_video, write_kps, gray, show_size, store_size, resize_ratio
 from utils.utils import boxdict2str, kpsdict2str, kpsScoredict2str
 import copy
 import numpy as np
@@ -16,7 +16,6 @@ body_dict = {name: idx for idx, name in enumerate(body_parts)}
 nece_point = [11, 13, 15]
 
 
-IP = ImgProcessor()
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 
 
@@ -46,6 +45,9 @@ class VideoProcessor:
         self.cap = cv2.VideoCapture(video_path)
         self.height, self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), \
                                   int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        self.resize_size = (int(self.width * resize_ratio), int(self.height * resize_ratio))
+        self.IP = ImgProcessor(self.resize_size)
+
         if write_video:
             try:
                 self.out = cv2.VideoWriter(video_path[:-4] + "_processed.avi", fourcc, 15, (self.width, self.height))
@@ -73,13 +75,12 @@ class VideoProcessor:
             frame_save = copy.deepcopy(frame)
             cnt += 1
             if ret:
-                # frame = cv2.resize(frame, frame_size)
-                kps, boxes, kps_score = IP.process_img(frame, gray=gray)
-                img, img_black = IP.visualize(h=self.height, w=self.width)
-                preds = IP.classify(img_black)
-                for location, pred in preds.items():
-                # pred = IP.classify_whole(img_black)
-                    cv2.putText(img, pred, location, cv2.FONT_HERSHEY_SIMPLEX, 1, (100, 100, 255), 3)
+                kps, boxes, kps_score = self.IP.process_img(frame, gray=gray)
+                img, img_black = self.IP.visualize()
+                preds = self.IP.classify(frame, img_black, boxes)
+
+                for location, preds in preds.items():
+                    cv2.putText(img, preds[0], location, cv2.FONT_HERSHEY_SIMPLEX, 1, (100, 100, 255), 3)
 
                 if boxes is not None:
                     if write_box:
@@ -139,10 +140,9 @@ class VideoProcessor:
                 except:
                     pass
 
-
                 cv2.putText(img, "Count: {}".format(count), (50, 150), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 255), 5)
-                cv2.imshow("res", cv2.resize(img, frame_size))
-                cv2.imshow("res_black", cv2.resize(img_black, frame_size))
+                cv2.imshow("res", cv2.resize(img, show_size))
+                cv2.imshow("res_black", cv2.resize(img_black, show_size))
                 cv2.waitKey(1)
                 if write_video:
                     self.out.write(frame_save)
